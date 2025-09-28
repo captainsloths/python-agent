@@ -1,6 +1,27 @@
 # run_python_file.py
 import os
 import subprocess
+from google.genai import types
+
+schema_run_python_file = types.FunctionDeclaration(
+    name="run_python_file",
+    description="Execute a Python file in the working directory",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="The path to the Python file to execute, relative to the working directory",
+            ),
+            "args": types.Schema(
+                type=types.Type.ARRAY,
+                description="Optional command line arguments to pass to the Python file",
+                items=types.Schema(type=types.Type.STRING),
+            ),
+        },
+        required=["file_path"],
+    ),
+)
 
 
 def run_python_file(working_directory, file_path, args=[]):
@@ -24,7 +45,7 @@ def run_python_file(working_directory, file_path, args=[]):
             return f'Error: File "{file_path}" not found.'
 
         if not file_path.endswith('.py'):
-            return f'Error: "{file_path}" is not a python file'
+            return f'Error: "{file_path}" is not a Python file'
 
         cmd = ['python', abs_target_path] + args
 
